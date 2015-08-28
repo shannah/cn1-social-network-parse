@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Step 3: Implement web service client utility methods
+*  - Implement getFriends(), sendFriendRequest(), and findUsers()
  */
 package com.codename1.demos.parse_social;
 
@@ -37,12 +36,11 @@ import java.util.Map;
  */
 public class SocialClientParse {
     private String token;
-    private static String URL = "http://cn-social-network-demo.weblite.ca";
     private ParseUser user;
     
     public SocialClientParse() {
         //NetworkManager.getInstance().setThreadCount(10);
-        Parse.initialize("zY7cu3JyYsCresgZ0P3WMALCNHN8JsqWtTWWNZU7", "mbWtI78kobm5j5fjFLqPOKcZWVE3YXiPAn0LqkbL");
+        Parse.initialize("UTlTPHw2HEDpwvpBsGK2F6dRLSQ4WzOzsmQO9vdN", "HrWImNX4ORQ3vg2ux57PLjTgMBBtnQxdyFRIoApM");
         
         
     }
@@ -108,12 +106,12 @@ public class SocialClientParse {
     
     
     
-    public void sendFriendRequest(String username) throws IOException {
+     public void sendFriendRequest(String username) throws IOException {
         callFunc("send_friend_request", new Object[]{"username", username});
         
     }
     
-    public void acceptFriendRequest(String username) throws IOException {
+     public void acceptFriendRequest(String username) throws IOException {
         callFunc("accept_friend_request", new Object[]{"username", username});
     }
     
@@ -136,7 +134,7 @@ public class SocialClientParse {
                 } else {
                     encImg = EncodedImage.createFromImage(img, false);
                 }
-                ParseFile imgFile = new ParseFile("avatar.png", encImg.getImageData(), "image/png");
+                ParseFile imgFile = new ParseFile("avatar.jpg", encImg.getImageData(), "image/jpeg");
                 imgFile.save();
                 
                 ParseObject uploadObject = ParseObject.create("Upload");
@@ -155,6 +153,7 @@ public class SocialClientParse {
         callFunc("update_profile", values);
     }
     
+    
     public String post(Map post) throws IOException {
         try {
             HashMap params = new HashMap();
@@ -167,9 +166,9 @@ public class SocialClientParse {
                 if (img instanceof EncodedImage) {
                     encImg = (EncodedImage)img;
                 } else {
-                    encImg = EncodedImage.createFromImage(img, false);
+                    encImg = EncodedImage.createFromImage(img, true);
                 }
-                ParseFile imgFile = new ParseFile("photo.png", encImg.getImageData(), "image/png");
+                ParseFile imgFile = new ParseFile("photo.jpg", encImg.getImageData(), "image/jpeg");
                 imgFile.save();
                 
                 ParseObject uploadObject = ParseObject.create("Upload");
@@ -200,6 +199,15 @@ public class SocialClientParse {
     
     public List<Map> getPosts(String username, Date olderThan) throws IOException {
         return null;
+    }
+    
+   
+    
+   
+   
+    
+    public List<Map> getFeed(Date olderThan) throws IOException {
+       return getList("get_feed", "posts");
     }
     
     private void callFunc(String funcName) throws IOException {
@@ -304,9 +312,6 @@ public class SocialClientParse {
         }
     }
     
-    public List<Map> getFeed(Date olderThan) throws IOException {
-       return getList("get_feed", "posts");
-    }
     
     Map toMap(JSONObject o) throws JSONException {
         HashMap out = new HashMap();
@@ -326,5 +331,6 @@ public class SocialClientParse {
     public String getUsername() {
         return user.getUsername();
     }
+    
     
 }

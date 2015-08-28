@@ -543,7 +543,7 @@ public class ParseSocialDemo {
             f.addComponent(BorderLayout.CENTER, padding);
             
             avatarBtn.addActionListener((e) -> {
-                String photoPath = Capture.capturePhoto();
+                String photoPath = Capture.capturePhoto(1024, 1024);
                 if (photoPath == null) {
                     // User cancelled the photo
                     return;
@@ -697,6 +697,14 @@ public class ParseSocialDemo {
         f.show();
     }
     
+    private EncodedImage encodedImage(Image img) {
+        if (img instanceof EncodedImage) {
+            return (EncodedImage)img;
+        } else {
+            return EncodedImage.createFromImage(img, true);
+        }
+    }
+    
     public void showAddPostForm(Form back) {
         Form f = new Form("Add Post");
         
@@ -708,15 +716,15 @@ public class ParseSocialDemo {
         Button photoButton = new Button("Attach Photo");
         photoButton.setTextPosition(Label.BOTTOM);
         photoButton.addActionListener((evt)-> {
-            String file = Capture.capturePhoto(1024, -1);
+            String file = Capture.capturePhoto(1024, 1024);
             if (file == null) {
                 return;
             }
             try {
                 Image img = Image.createImage(file).scaledSmallerRatio(256, 256);
                 photoButton.setIcon(img);
-                Image fullImage = Image.createImage(file);
-                photoButton.putClientProperty("fullImage", fullImage);
+                EncodedImage fullImage = encodedImage(Image.createImage(file));
+                photoButton.putClientProperty("fullImage", fullImage.scaledEncoded(1024, fullImage.getHeight() / fullImage.getWidth() * 1024));
                 f.revalidate();
             } catch (IOException ex) {
                 showError(ex.getMessage());
